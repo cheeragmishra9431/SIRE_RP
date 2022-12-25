@@ -20,6 +20,14 @@ def run_query(query):
         return cur.fetchall()
 
 # run_query("INSERT INTO mytable VALUES ('Mary', 'dog'), ('John', 'cat'), ('Robert', 'bird');")
+x=1
+y='namrata'
+z='namrata@gmail.com'
+p='namr'
+q_r="INSERT INTO User_Info VALUES ({ph},'{Nm}','{Em}','{pa_ss}')".format(ph = x, Nm= y, Em= z, pa_ss=p)
+conn.commit()
+q_r1=q_r
+run_query(q_r1)
 rows = run_query("SELECT * from User_Info;")
 # st.write(rows)
 # Print results.
