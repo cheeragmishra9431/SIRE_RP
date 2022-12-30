@@ -2,7 +2,25 @@
 
 import streamlit as st
 import mysql.connector
+#importing streamwebrtc
+from streamlit_webrtc import webrtc_streamer, RTCConfiguration
+import av
+import cv2
 
+# model with har casscade
+cascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
+
+# passing it through model
+class VideoProcessor:
+	def recv(self, frame):
+		frm = frame.to_ndarray(format="bgr24")
+
+		faces = cascade.detectMultiScale(cv2.cvtColor(frm, cv2.COLOR_BGR2GRAY), 1.1, 3)
+
+		for x,y,w,h in faces:
+			cv2.rectangle(frm, (x,y), (x+w, y+h), (0,255,0), 3)
+
+		return av.VideoFrame.from_ndarray(frm, format='bgr24')
 
 @st.experimental_singleton
 def init_connection():
@@ -37,6 +55,11 @@ def show_main_page():
         # if processingClicked:
         #        st.balloons() 
         st.header('Henlo!!!')
+        webrtc_streamer(key="key", video_processor_factory=VideoProcessor,
+				rtc_configuration=RTCConfiguration(
+					{"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
+					)
+	                )
  
 def LoggedOut_Clicked():
     st.session_state['loggedIn'] = False
